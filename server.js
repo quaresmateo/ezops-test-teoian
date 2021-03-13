@@ -7,7 +7,7 @@ mongoose.set('useFindAndModify', false)
 mongoose.set('useCreateIndex', true)
 const app = express()
 app.use(express.json())
-app.use(express.urlencoded())
+app.use(express.urlencoded({ extended: true }))
 const resources = '/resources'
 const { DB_USER, DB_PASS, DB_LINK, DB_DATABASE } = process.env
 
