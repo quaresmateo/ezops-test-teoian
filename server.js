@@ -9,6 +9,7 @@ const { DB_USER, DB_PASS, DB_LINK, DB_DATABASE } = process.env
 
 /* Database connection */
 const dbUrl = `mongodb+srv://${DB_USER}:${DB_PASS}@${DB_LINK}/${DB_DATABASE}?retryWrites=true&w=majority`
+mongoose.set('useNewUrlParser', true)
 mongoose.connect(dbUrl, () => {
   console.log('mongodb connected')
 })
