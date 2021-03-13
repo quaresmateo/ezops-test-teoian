@@ -32,7 +32,47 @@
       <div id="messages"></div>
     </div>
 
-    <script></script>
+    <script>
+      const baseUrl = 'http://localhost:3000'
+
+      function send() {
+        sendMessage({
+          name: document.querySelector('#name').value,
+          message: document.querySelector('#message').value,
+        })
+        getMessages()
+      }
+
+      function addMessages(message) {
+        const messageField = document.querySelector('#messages')
+        append(
+          messageField,
+          `
+            <h4>${message.name}</h4>
+            <p>${message.message}</p>
+          `
+        )
+      }
+
+      function getMessages() {
+        fetch(`${baseUrl}/messages`).then(data => {
+          data.forEach(addMessages)
+        })
+      }
+
+      function append(parent, el) {
+        return parent.appendChild(el)
+      }
+
+      function sendMessage(message) {
+        const url = `${baseUrl}/messages`
+        const method = 'POST'
+        const headers = new Headers()
+        const body = message
+
+        fetch(url, { method, body, headers })
+      }
+    </script>
 
     <script
       src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/js/bootstrap.bundle.min.js"
