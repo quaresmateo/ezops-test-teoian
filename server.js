@@ -1,6 +1,10 @@
 const express = require('express')
-const mongoose = require('mongoose')
 const dotenv = require('dotenv').config()
+const mongoose = require('mongoose')
+mongoose.set('useUnifiedTopology', true)
+mongoose.set('useNewUrlParser', true)
+mongoose.set('useFindAndModify', false)
+mongoose.set('useCreateIndex', true)
 const app = express()
 app.use(express.json())
 app.use(express.urlencoded())
@@ -9,13 +13,13 @@ const { DB_USER, DB_PASS, DB_LINK, DB_DATABASE } = process.env
 
 /* Database connection */
 const dbUrl = `mongodb+srv://${DB_USER}:${DB_PASS}@${DB_LINK}/${DB_DATABASE}?retryWrites=true&w=majority`
-mongoose.set('useNewUrlParser', true)
 mongoose.connect(dbUrl, () => {
   console.log('mongodb connected')
 })
 
 /* Models */
-const Message = mongoose.model('Message', { name: String, message: String })
+const message = new mongoose.Schema({ name: String, message: String })
+const Message = mongoose.model('Message', message)
 
 /* Endpoints */
 app.get('/messages', (request, response) => {
@@ -35,6 +39,7 @@ app.post('/messages', (request, response) => {
   })
 })
 
+/* Server */
 const server = app.listen(3000, () => {
   console.log('server is running on port', server.address().port)
 })
