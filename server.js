@@ -1,5 +1,6 @@
 const express = require('express')
 const dotenv = require('dotenv').config()
+const Message = require('./models/Message')
 const mongoose = require('mongoose')
 const app = express()
 app.use(express.json())
@@ -17,27 +18,25 @@ mongoose
     useCreateIndex: true,
   })
   .then(() => console.log('mongodb connected'))
-
-/* Models */
-const message = new mongoose.Schema({ name: String, message: String })
-const Message = mongoose.model('Message', message)
+  .catch(error => console.log(error))
 
 /* Endpoints */
 app.get('/messages', (request, response) => {
-  Message.find({}, (error, messages) => {
-    response.send(messages)
-  })
+  Message.find()
+    .then(messages => {
+      console.log(messages)
+      response.send(messages)
+    })
+    .catch(error => console.log(error))
 })
 
 app.post('/messages', (request, response) => {
   const message = new Message(request.body)
-  message.save(error => {
-    if (error) {
-      response.sendStatus(500)
-    } else {
-      response.sendStatus(200)
-    }
-  })
+  console.log('body', request.body)
+  message
+    .save()
+    .then(result => console.log('Message created', result))
+    .catch(error => console.log(error))
 })
 
 /* Server */
