@@ -10,7 +10,11 @@
       integrity="sha384-BmbxuPwQa2lc/FVzBcNJ7UAyJxM6wuqIj61tLrc4wSX0szH/Ev+nYRRuWlolflfl"
       crossorigin="anonymous"
     />
-
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.21.1/axios.min.js"
+      integrity="sha512-bZS47S7sPOxkjU/4Bt0zrhEtWx0y0CRkhEp8IckzK+ltifIIE9EMIMTuT/mEzoIMewUINruDBIR/jJnbguonqQ=="
+      crossorigin="anonymous"
+    ></script>
     <link rel="stylesheet" href="./assets/css/main.css" />
   </head>
   <body>
@@ -25,10 +29,14 @@
           id="message"
           class="form-control"
           placeholder="Your Message Here"
+          rows="5"
         ></textarea>
         <br />
-        <button id="send" class="btn btn-success">Send</button>
+        <button id="send" onclick="send()" class="btn btn-success btn-lg">
+          Send
+        </button>
       </div>
+      <br />
       <div id="messages"></div>
     </div>
 
@@ -48,29 +56,32 @@
         append(
           messageField,
           `
-            <h4>${message.name}</h4>
-            <p>${message.message}</p>
+              <h4>${message.name}</h4>
+              <p>${message.message}</p>
           `
         )
       }
 
       function getMessages() {
-        fetch(`${baseUrl}/messages`).then(data => {
+        axios.get(`${baseUrl}/messages`).then(({ data }) => {
           data.forEach(addMessages)
         })
       }
 
       function append(parent, el) {
-        return parent.appendChild(el)
+        parent.innerHTML = el
       }
 
-      function sendMessage(message) {
+      function sendMessage(data) {
         const url = `${baseUrl}/messages`
-        const method = 'POST'
-        const headers = new Headers()
-        const body = message
 
-        fetch(url, { method, body, headers })
+        axios
+          .post(url, data)
+          .then(result => {
+            console.log('criou')
+            console.log('result', result)
+          })
+          .catch(error => console.log(error))
       }
     </script>
 
