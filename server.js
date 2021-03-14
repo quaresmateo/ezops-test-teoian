@@ -1,10 +1,6 @@
 const express = require('express')
 const dotenv = require('dotenv').config()
 const mongoose = require('mongoose')
-mongoose.set('useUnifiedTopology', true)
-mongoose.set('useNewUrlParser', true)
-mongoose.set('useFindAndModify', false)
-mongoose.set('useCreateIndex', true)
 const app = express()
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
@@ -13,9 +9,14 @@ const { DB_USER, DB_PASS, DB_LINK, DB_DATABASE } = process.env
 
 /* Database connection */
 const dbUrl = `mongodb+srv://${DB_USER}:${DB_PASS}@${DB_LINK}/${DB_DATABASE}?retryWrites=true&w=majority`
-mongoose.connect(dbUrl, () => {
-  console.log('mongodb connected')
-})
+mongoose
+  .connect(dbUrl, {
+    useUnifiedTopology: true,
+    useNewUrlParser: true,
+    useFindAndModify: true,
+    useCreateIndex: true,
+  })
+  .then(() => console.log('mongodb connected'))
 
 /* Models */
 const message = new mongoose.Schema({ name: String, message: String })
