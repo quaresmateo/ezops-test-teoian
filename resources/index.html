@@ -42,6 +42,8 @@
 
     <script>
       const baseUrl = 'http://localhost:3000'
+      const socket = io()
+      socket.on('message', addMessages)
 
       function send() {
         sendMessage({
@@ -56,8 +58,8 @@
         append(
           messageField,
           `
-              <h4>${message.name}</h4>
-              <p>${message.message}</p>
+            <h4>${message.name}</h4>
+            <p>${message.message}</p>
           `
         )
       }
@@ -90,5 +92,7 @@
       integrity="sha384-b5kHyXgcpbZJO/tY9Ul7kGkf1S0CWuKcCD38l8YkeH8z8QjE0GmW1gYU5S9FOnJ0"
       crossorigin="anonymous"
     ></script>
+
+    <script src="socket.io/socket.io.js"></script>
   </body>
 </html>

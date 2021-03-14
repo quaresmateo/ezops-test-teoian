@@ -3,6 +3,8 @@ const dotenv = require('dotenv').config()
 const Message = require('./models/Message')
 const mongoose = require('mongoose')
 const app = express()
+const http = require('http').Server(app)
+const io = require('socket.io')(http)
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 const resources = '/resources'
@@ -30,12 +32,20 @@ app.get('/messages', (request, response) => {
     .catch(error => console.log(error))
 })
 
+/* Socket IO */
+io.on('connection', client => {
+  console.log('a user is connected')
+})
+
 app.post('/messages', (request, response) => {
   const message = new Message(request.body)
   console.log('body', request.body)
   message
     .save()
-    .then(result => console.log('Message created', result))
+    .then(result => {
+      io.emit('message', request.body)
+      console.log('Message created', result)
+    })
     .catch(error => console.log(error))
 })
 
