@@ -10,10 +10,19 @@
       integrity="sha384-BmbxuPwQa2lc/FVzBcNJ7UAyJxM6wuqIj61tLrc4wSX0szH/Ev+nYRRuWlolflfl"
       crossorigin="anonymous"
     />
-
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.21.1/axios.min.js"
+      integrity="sha512-bZS47S7sPOxkjU/4Bt0zrhEtWx0y0CRkhEp8IckzK+ltifIIE9EMIMTuT/mEzoIMewUINruDBIR/jJnbguonqQ=="
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/3.1.3/socket.io.js"
+      integrity="sha512-2RDFHqfLZW8IhPRvQYmK9bTLfj/hddxGXQAred2wNZGkrKQkLGj8RCkXfRJPHlDerdHHIzTFaahq4s/P4V6Qig=="
+      crossorigin="anonymous"
+    ></script>
     <link rel="stylesheet" href="./assets/css/main.css" />
   </head>
-  <body>
+  <body onload="getMessages()">
     <div class="container">
       <br />
       <div class="jumbotron">
@@ -25,14 +34,72 @@
           id="message"
           class="form-control"
           placeholder="Your Message Here"
+          rows="5"
+          onkeypress="send()"
         ></textarea>
         <br />
-        <button id="send" class="btn btn-success">Send</button>
+        <button id="send" onclick="send(true)" class="btn btn-success btn-lg">
+          Send
+        </button>
       </div>
+      <br />
       <div id="messages"></div>
     </div>
 
-    <script></script>
+    <script>
+      const baseUrl = 'http://localhost:3000'
+      const socket = io(baseUrl)
+      socket.on('message', addMessages)
+
+      function send(enter) {
+        const key = event.keyCode
+        const name = document.querySelector('#name').value
+        const message = document.querySelector('#message').value
+
+        if (key === 13 || enter) {
+          sendMessage({
+            name,
+            message,
+          })
+
+          document.querySelector('#message').value = ''
+        }
+      }
+
+      function addMessages(message) {
+        const messageField = document.querySelector('#messages')
+        append(messageField, { name: message.name, message: message.message })
+      }
+
+      function getMessages() {
+        axios.get(`${baseUrl}/messages`).then(({ data }) => {
+          data.forEach(addMessages)
+        })
+      }
+
+      function append(parent, data) {
+        const nameField = document.createElement('h4')
+        const messageField = document.createElement('p')
+        nameField.textContent = data.name
+        messageField.textContent = data.message
+
+        parent.insertBefore(nameField, parent.children[0])
+        parent.insertBefore(messageField, parent.children[1])
+      }
+
+      function sendMessage(data) {
+        const url = `${baseUrl}/messages`
+
+        axios
+          .post(url, data)
+          .then(result => {
+            console.log('Message sended')
+          })
+          .catch(error => console.log(error))
+      }
+
+      getMessages()
+    </script>
 
     <script
       src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/js/bootstrap.bundle.min.js"
