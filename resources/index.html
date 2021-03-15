@@ -15,9 +15,14 @@
       integrity="sha512-bZS47S7sPOxkjU/4Bt0zrhEtWx0y0CRkhEp8IckzK+ltifIIE9EMIMTuT/mEzoIMewUINruDBIR/jJnbguonqQ=="
       crossorigin="anonymous"
     ></script>
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/3.1.3/socket.io.js"
+      integrity="sha512-2RDFHqfLZW8IhPRvQYmK9bTLfj/hddxGXQAred2wNZGkrKQkLGj8RCkXfRJPHlDerdHHIzTFaahq4s/P4V6Qig=="
+      crossorigin="anonymous"
+    ></script>
     <link rel="stylesheet" href="./assets/css/main.css" />
   </head>
-  <body>
+  <body onload="getMessages()">
     <div class="container">
       <br />
       <div class="jumbotron">
@@ -42,7 +47,7 @@
 
     <script>
       const baseUrl = 'http://localhost:3000'
-      const socket = io()
+      const socket = io(baseUrl)
       socket.on('message', addMessages)
 
       function send() {
@@ -50,18 +55,11 @@
           name: document.querySelector('#name').value,
           message: document.querySelector('#message').value,
         })
-        getMessages()
       }
 
       function addMessages(message) {
         const messageField = document.querySelector('#messages')
-        append(
-          messageField,
-          `
-            <h4>${message.name}</h4>
-            <p>${message.message}</p>
-          `
-        )
+        append(messageField, { name: message.name, message: message.message })
       }
 
       function getMessages() {
@@ -70,8 +68,17 @@
         })
       }
 
-      function append(parent, el) {
-        parent.innerHTML = el
+      function append(parent, data) {
+        const nameField = document.createElement('h4')
+        const messageField = document.createElement('p')
+        nameField.textContent = data.name
+        messageField.textContent = data.message
+
+        // parent.appendChild(nameField)
+        // parent.appendChild(messageField)
+
+        parent.insertBefore(nameField, parent.children[0])
+        parent.insertBefore(messageField, parent.children[1])
       }
 
       function sendMessage(data) {
@@ -85,6 +92,8 @@
           })
           .catch(error => console.log(error))
       }
+
+      getMessages()
     </script>
 
     <script
@@ -92,7 +101,5 @@
       integrity="sha384-b5kHyXgcpbZJO/tY9Ul7kGkf1S0CWuKcCD38l8YkeH8z8QjE0GmW1gYU5S9FOnJ0"
       crossorigin="anonymous"
     ></script>
-
-    <script src="socket.io/socket.io.js"></script>
   </body>
 </html>

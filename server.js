@@ -3,7 +3,7 @@ const dotenv = require('dotenv').config()
 const Message = require('./models/Message')
 const mongoose = require('mongoose')
 const app = express()
-const http = require('http').Server(app)
+const http = require('http').createServer(app)
 const io = require('socket.io')(http)
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
@@ -32,11 +32,6 @@ app.get('/messages', (request, response) => {
     .catch(error => console.log(error))
 })
 
-/* Socket IO */
-io.on('connection', client => {
-  console.log('a user is connected')
-})
-
 app.post('/messages', (request, response) => {
   const message = new Message(request.body)
   console.log('body', request.body)
@@ -49,9 +44,14 @@ app.post('/messages', (request, response) => {
     .catch(error => console.log(error))
 })
 
-/* Server */
-const server = app.listen(3000, () => {
-  console.log('server is running on port', server.address().port)
+/* Socket IO */
+io.on('connection', client => {
+  console.log('new connection', client.id)
 })
 
 app.use(express.static(__dirname + resources))
+
+/* Server */
+const server = http.listen(3000, () => {
+  console.log('server is running on port', server.address().port)
+})
