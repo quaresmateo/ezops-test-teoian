@@ -34,12 +34,11 @@ app.get('/messages', (request, response) => {
 
 app.post('/messages', (request, response) => {
   const message = new Message(request.body)
-  console.log('body', request.body)
   message
     .save()
     .then(result => {
       io.emit('message', request.body)
-      console.log('Message created', result)
+      console.log('Message created')
     })
     .catch(error => console.log(error))
 })
