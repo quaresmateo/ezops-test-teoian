@@ -26,7 +26,6 @@ mongoose
 app.get('/messages', (request, response) => {
   Message.find()
     .then(messages => {
-      console.log(messages)
       response.send(messages)
     })
     .catch(error => console.log(error))
