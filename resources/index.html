@@ -35,9 +35,10 @@
           class="form-control"
           placeholder="Your Message Here"
           rows="5"
+          onkeypress="send()"
         ></textarea>
         <br />
-        <button id="send" onclick="send()" class="btn btn-success btn-lg">
+        <button id="send" onclick="send(true)" class="btn btn-success btn-lg">
           Send
         </button>
       </div>
@@ -50,11 +51,19 @@
       const socket = io(baseUrl)
       socket.on('message', addMessages)
 
-      function send() {
-        sendMessage({
-          name: document.querySelector('#name').value,
-          message: document.querySelector('#message').value,
-        })
+      function send(enter) {
+        const key = event.keyCode
+        const name = document.querySelector('#name').value
+        const message = document.querySelector('#message').value
+
+        if (key === 13 || enter) {
+          sendMessage({
+            name,
+            message,
+          })
+
+          document.querySelector('#message').value = ''
+        }
       }
 
       function addMessages(message) {
@@ -73,9 +82,6 @@
         const messageField = document.createElement('p')
         nameField.textContent = data.name
         messageField.textContent = data.message
-
-        // parent.appendChild(nameField)
-        // parent.appendChild(messageField)
 
         parent.insertBefore(nameField, parent.children[0])
         parent.insertBefore(messageField, parent.children[1])
