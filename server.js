@@ -37,6 +37,15 @@ app.post('/messages', (request, response) => {
     .save()
     .then(result => {
       io.emit('message', request.body)
+      if (checkString(request)) {
+        setTimeout(() => {
+          io.emit('message', {
+            name: 'Bot',
+            message: 'Olá!\nSeja bem-vindo a nossa plataforma!',
+          })
+        }, 1000)
+      }
+
       console.log('Message created')
     })
     .catch(error => console.log(error))
@@ -53,3 +62,14 @@ app.use(express.static(__dirname + resources))
 const server = http.listen(3000, () => {
   console.log('server is running on port', server.address().port)
 })
+
+function checkString(request) {
+  const words = request.body.message.split(' ')
+  return (
+    words.includes('oi') ||
+    words.includes('ola') ||
+    words.includes('hi') ||
+    words.includes('hello') ||
+    words.includes('hey')
+  )
+}
