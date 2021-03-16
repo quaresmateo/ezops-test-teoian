@@ -15,7 +15,7 @@ services:
       - DB_LINK=$DB_LINK
       - DB_DATABASE=$DB_DATABASE
     ports:
-      - "80:8080"
+      - "3000:3000"
     volumes:
       - .:/home/node/app
     command: ["npm", "start"]
